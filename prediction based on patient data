@@ -1,0 +1,57 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Load the dataset
+data = pd.read_csv('Training.csv')  # Replace with the correct path to your dataset
+
+# Separate features and target
+X = data.drop('prognosis', axis=1)
+y = data['prognosis']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize the Random Forest classifier
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train the model
+rf_classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = rf_classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
+🩺 Making Predictions
+To predict a disease based on new patient symptoms:
+arXiv
+
+python
+Copy
+Edit
+# Example: Predicting disease for a new patient
+# Create a dictionary with symptom names as keys and 1 (present) or 0 (absent) as values
+new_patient = {
+    'itching': 1,
+    'skin_rash': 1,
+    'nodal_skin_eruptions': 0,
+    # Add all other features with appropriate values
+}
+
+# Convert the dictionary to a DataFrame
+new_patient_df = pd.DataFrame([new_patient])
+
+# Ensure all columns are present
+for col in X.columns:
+    if col not in new_patient_df.columns:
+        new_patient_df[col] = 0  # Assume symptom is absent
+
+# Reorder columns to match training data
+new_patient_df = new_patient_df[X.columns]
+
+# Predict the disease
+predicted_disease = rf_classifier.predict(new_patient_df)
+print(f"Predicted Disease: {predicted_disease[0]}")
